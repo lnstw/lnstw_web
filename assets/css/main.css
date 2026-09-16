@@ -78,7 +78,7 @@ body {
 	}
 
 	body {
-		background: #1b1f22;
+		background: #d9e1e7;
 	}
 
 		body.is-preload *, body.is-preload *:before, body.is-preload *:after {
@@ -462,7 +462,7 @@ body {
 			-webkit-transition-delay: 0.75s;
 			-ms-transition-delay: 0.75s;
 			transition-delay: 0.75s;
-			background-image: linear-gradient(to top, rgba(19, 21, 25, 0.5), rgba(19, 21, 25, 0.5)), url("../../images/overlay.png");
+			background-image: linear-gradient(to top, rgba(82, 94, 117, 0.5), rgba(79, 106, 160, 0.5)), url("../../images/overlay.png");
 			background-size: auto,
  256px 256px;
 			background-position: center,
@@ -861,7 +861,7 @@ body {
 			position: relative;
 			width: 40rem;
 			max-width: 100%;
-			background-color: rgba(27, 31, 34, 0.85);
+			background-color: rgba(43, 64, 80, 0.85);
 			border-radius: 4px;
 			opacity: 0;
 		}
