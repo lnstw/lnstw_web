@@ -81,7 +81,7 @@ body {
 		background: #d9e1e7;
 	}
 
-		body.is-preload *, body.is-preload *:before, body.is-preload *:after {
+		body.is-preload #wrapper *, body.is-preload #wrapper *:before, body.is-preload #wrapper *:after {
 			-moz-animation: none !important;
 			-webkit-animation: none !important;
 			-ms-animation: none !important;
@@ -90,6 +90,50 @@ body {
 			-webkit-transition: none !important;
 			-ms-transition: none !important;
 			transition: none !important;
+		}
+
+	#loading-screen {
+		position: fixed;
+		z-index: 20;
+		top: 0;
+		left: 0;
+		display: flex;
+		width: 100%;
+		height: 100%;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
+		background: #446177;
+		transition: opacity 0.5s ease-in-out;
+	}
+
+		#loading-screen img {
+			width: 6.5rem;
+			height: 6.5rem;
+			border: solid 1px #ffffff;
+			border-radius: 100%;
+			object-fit: cover;
+			transform: translate(-50%, -50%) scale(0.15);
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform-origin: center;
+		}
+
+		#loading-screen.is-moving img {
+			transition: transform 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+		}
+
+		#loading-screen p {
+			margin: 7rem 0 0;
+			color: #ffffff;
+			font-size: 0.9rem;
+			letter-spacing: 0.1rem;
+		}
+
+		#loading-screen.is-finished {
+			opacity: 0;
+			pointer-events: none;
 		}
 
 /* Type */
@@ -462,7 +506,7 @@ body {
 			-webkit-transition-delay: 0.75s;
 			-ms-transition-delay: 0.75s;
 			transition-delay: 0.75s;
-			background-image: linear-gradient(to top, rgba(82, 94, 117, 0.5), rgba(79, 106, 160, 0.5)), url("../../images/overlay.png");
+			background-image: linear-gradient(to top, rgba(82, 94, 117, 0.5), rgba(82, 94, 117, 0.5)), url("../../images/overlay.png");
 			background-size: auto,
  256px 256px;
 			background-position: center,
@@ -614,12 +658,20 @@ body {
 			}
 
 		#header .logo {
-			width: 5.5rem;
-			height: 5.5rem;
+			width: 6.5rem;
+			height: 6.5rem;
 			line-height: 5.5rem;
 			border: solid 1px #ffffff;
 			border-radius: 100%;
+			overflow: hidden;
 		}
+
+			#header .logo img {
+				display: block;
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
 
 			#header .logo .icon:before {
 				font-size: 2rem;
@@ -861,7 +913,7 @@ body {
 			position: relative;
 			width: 40rem;
 			max-width: 100%;
-			background-color: rgba(43, 64, 80, 0.85);
+			background-color: rgba(138, 181, 255, 0.55);
 			border-radius: 4px;
 			opacity: 0;
 		}

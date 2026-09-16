@@ -26,9 +26,23 @@
 
 	// Play initial animations on page load.
 		$window.on('load', function() {
+			var loadingScreen = document.getElementById('loading-screen'),
+				loadingAvatar = loadingScreen.querySelector('img'),
+				logo = document.querySelector('#header .logo'),
+				logoRect = logo.getBoundingClientRect(),
+				avatarRect = loadingAvatar.getBoundingClientRect(),
+				deltaX = logoRect.left + logoRect.width / 2 - (avatarRect.left + avatarRect.width / 2),
+				deltaY = logoRect.top + logoRect.height / 2 - (avatarRect.top + avatarRect.height / 2);
+
+			loadingScreen.classList.add('is-moving');
 			window.setTimeout(function() {
+				loadingAvatar.style.transform = 'translate(calc(-50% + ' + deltaX + 'px), calc(-50% + ' + deltaY + 'px)) scale(1)';
+			}, 50);
+
+			window.setTimeout(function() {
+				loadingScreen.classList.add('is-finished');
 				$body.removeClass('is-preload');
-			}, 100);
+			}, 1200);
 		});
 
 	// Fix: Flexbox min-height bug on IE.
