@@ -6,6 +6,185 @@
 
 (function($) {
 
+	var snowCanvas = document.getElementById('snow');
+
+	if (snowCanvas) {
+		var snowContext = snowCanvas.getContext('2d'),
+			snowflakes = [],
+			snowAnimationFrame,
+			snowEnabled = true,
+			snowPile = document.getElementById('snow-piles'),
+			snowPileHeight = 0,
+			snowPileTarget = 0,
+			lastSnowTime = 0,
+			reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+		function updateSnowPileTarget() {
+			var toggleRect = document.getElementById('snow-toggle').getBoundingClientRect(),
+				spaceBelowToggle = window.innerHeight - toggleRect.bottom,
+				isMobile = window.matchMedia('(max-width: 480px)').matches,
+				safetySpace = isMobile ? 40 : 90;
+
+			snowPileTarget = isMobile
+				? Math.min(100, Math.max(0, spaceBelowToggle - safetySpace))
+				: Math.max(0, spaceBelowToggle - safetySpace);
+			snowPileHeight = Math.min(snowPileHeight, snowPileTarget);
+			snowPile.style.setProperty('--snow-height', snowPileHeight + 'px');
+		}
+
+		function updateSnowPile(time) {
+			var elapsed = lastSnowTime ? Math.min(100, time - lastSnowTime) : 0,
+				growthRate = window.matchMedia('(max-width: 480px)').matches ? 0.012 : 0.004;
+
+			lastSnowTime = time;
+			if (!reducedMotion && snowPileHeight < snowPileTarget)
+				snowPileHeight = Math.min(snowPileTarget, snowPileHeight + elapsed * growthRate);
+			else if (reducedMotion)
+				snowPileHeight = snowPileTarget;
+
+			snowPile.style.setProperty('--snow-height', snowPileHeight + 'px');
+		}
+
+		function resizeSnow() {
+			var pixelRatio = Math.min(window.devicePixelRatio || 1, 2),
+				width = window.innerWidth,
+				height = window.innerHeight,
+				flakeCount = Math.min(180, Math.max(45, Math.floor(width * height / 11000)));
+
+			snowCanvas.width = width * pixelRatio;
+			snowCanvas.height = height * pixelRatio;
+			snowContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+			snowflakes = [];
+
+			for (var index = 0; index < flakeCount; index++) {
+				snowflakes.push({
+					x: Math.random() * width,
+					y: Math.random() * height,
+					radius: Math.pow(Math.random(), 1.8) * 4.8 + 0.55,
+					speed: Math.random() * 1.2 + 0.35,
+					drift: Math.random() * 0.8 - 0.4,
+					opacity: Math.random() * 0.55 + 0.3,
+					phase: Math.random() * Math.PI * 2
+				});
+			}
+		}
+
+		function drawSnow(time) {
+			var width = window.innerWidth,
+				height = window.innerHeight;
+
+			updateSnowPile(time);
+			snowContext.clearRect(0, 0, width, height);
+			snowContext.fillStyle = '#ffffff';
+
+			snowflakes.forEach(function(flake) {
+				var horizontalOffset = Math.sin(time * 0.0007 + flake.phase) * 12;
+
+				snowContext.globalAlpha = flake.opacity;
+				snowContext.beginPath();
+				snowContext.arc(flake.x + horizontalOffset, flake.y, flake.radius, 0, Math.PI * 2);
+				snowContext.fill();
+
+				flake.y += flake.speed;
+				flake.x += flake.drift;
+
+				if (flake.y > height + flake.radius) {
+					flake.y = -flake.radius;
+					flake.x = Math.random() * width;
+				}
+				if (flake.x < -20)
+					flake.x = width + 20;
+				else if (flake.x > width + 20)
+					flake.x = -20;
+			});
+
+			snowContext.globalAlpha = 1;
+			if (!reducedMotion && snowEnabled)
+				snowAnimationFrame = window.requestAnimationFrame(drawSnow);
+		}
+
+		function setSnowEnabled(enabled) {
+			snowEnabled = enabled;
+			if (!snowEnabled) {
+				window.cancelAnimationFrame(snowAnimationFrame);
+				snowContext.clearRect(0, 0, window.innerWidth, window.innerHeight);
+			} else if (!reducedMotion) {
+				snowAnimationFrame = window.requestAnimationFrame(drawSnow);
+			} else {
+				drawSnow(0);
+			}
+		}
+
+		function addSnowMark(event, className) {
+			var containerRect = snowPile.getBoundingClientRect(),
+				mark = document.createElement('span');
+
+			mark.className = className;
+			mark.style.left = event.clientX - containerRect.left + 'px';
+			mark.style.top = event.clientY - containerRect.top + 'px';
+			snowPile.appendChild(mark);
+			window.setTimeout(function() {
+				mark.remove();
+			}, className === 'snow-mouse-print' ? 3400 : 3100);
+		}
+
+		function isOnSnow(event) {
+			var pileRect = snowPile.getBoundingClientRect(),
+				x = (event.clientX - pileRect.left) / pileRect.width,
+				y = (event.clientY - pileRect.top) / pileRect.height,
+				mounds = [
+					{ center: 0.14, radius: 0.31 },
+					{ center: 0.43, radius: 0.39 },
+					{ center: 0.74, radius: 0.35 },
+					{ center: 0.96, radius: 0.3 }
+				];
+
+			return mounds.some(function(mound) {
+				var horizontalDistance = (x - mound.center) / mound.radius,
+					topEdge;
+
+				if (Math.abs(horizontalDistance) > 1)
+					return false;
+
+				topEdge = 1 - 0.58 * Math.sqrt(1 - horizontalDistance * horizontalDistance);
+				return y >= topEdge;
+			});
+		}
+
+		resizeSnow();
+		updateSnowPileTarget();
+		window.addEventListener('resize', resizeSnow);
+		window.addEventListener('resize', updateSnowPileTarget);
+		window.addEventListener('load', function() {
+			window.setTimeout(updateSnowPileTarget, 1300);
+		});
+		if (window.ResizeObserver)
+			new ResizeObserver(updateSnowPileTarget).observe(document.getElementById('snow-toggle'));
+		snowPile.addEventListener('click', function(event) {
+			if (!snowEnabled || !isOnSnow(event))
+				return;
+
+			addSnowMark(event, 'snow-mouse-print');
+		});
+		if (reducedMotion) {
+			drawSnow(0);
+		} else {
+			snowAnimationFrame = window.requestAnimationFrame(drawSnow);
+		}
+	}
+
+	var snowToggle = document.getElementById('snow-toggle');
+	if (snowToggle) {
+		snowToggle.addEventListener('click', function() {
+			var enabled = snowToggle.getAttribute('aria-pressed') !== 'true';
+
+			snowToggle.setAttribute('aria-pressed', enabled);
+			snowToggle.setAttribute('title', enabled ? '關閉下雪' : '開啟下雪');
+		document.body.classList.toggle('snow-disabled', !enabled);
+			setSnowEnabled(enabled);
+		});
+	}
+
 	var	$window = $(window),
 		$body = $('body'),
 		$wrapper = $('#wrapper'),

@@ -38,8 +38,9 @@
 								<li><a href="#intro">關於我</a></li>
 								<li><a href="#friend">我的朋友</a></li>
 								<li><a href="#contact">認識我</a></li>
-								<li><a href="https://github.com/lnstw/lnstw_web" class="icon brands fa-github" target="_blank">點我前往此網頁的Github</a></li>
+								<li><a href="https://github.com/lnstw/lnstw_web" class="icon brands fa-github" target="_blank">Github</a></li>
 							</ul>
+							<button id="snow-toggle" type="button" aria-pressed="true" title="關閉下雪"><span aria-hidden="true">❄</span> 下雪</button>
 						</nav>
 					</header>
 					<div id="main">
@@ -96,6 +97,8 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 					</footer>
 			</div>
 			<div id="bg"></div>
+			<canvas id="snow" aria-hidden="true"></canvas>
+			<div id="snow-piles" aria-hidden="true"></div>
 		<script src="assets/js/jquery.min.js"></script>
 		<script src="assets/js/browser.min.js"></script>
 		<script src="assets/js/breakpoints.min.js"></script>
