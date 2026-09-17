@@ -79,10 +79,15 @@ body {
 
 	body {
 		background: #d9e1e7;
+		-webkit-tap-highlight-color: transparent;
 		-webkit-user-select: none;
 		-moz-user-select: none;
 		-ms-user-select: none;
 		user-select: none;
+	}
+
+	a, button {
+		-webkit-tap-highlight-color: transparent;
 	}
 
 		body.is-preload #wrapper *, body.is-preload #wrapper *:before, body.is-preload #wrapper *:after {
