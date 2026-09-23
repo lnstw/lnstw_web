@@ -140,6 +140,28 @@ body {
 			letter-spacing: 0.1rem;
 		}
 
+		#loading-screen #loading-warning {
+			margin-top: 0.5rem;
+			font-size: 0.65rem;
+			letter-spacing: 0.04rem;
+			opacity: 0;
+			transition: opacity 0.3s ease-in-out;
+		}
+
+		#loading-screen.is-slow #loading-warning {
+			opacity: 1;
+			animation: loading-warning-breathe 1.8s ease-in-out infinite;
+		}
+
+	@keyframes loading-warning-breathe {
+		0%, 100% {
+			opacity: 0.45;
+		}
+		50% {
+			opacity: 1;
+		}
+	}
+
 		#loading-screen.is-finished {
 			opacity: 0;
 			pointer-events: none;

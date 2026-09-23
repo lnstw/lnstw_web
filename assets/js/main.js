@@ -204,14 +204,21 @@
 		});
 
 	// Play initial animations on page load.
+		var loadingScreen = document.getElementById('loading-screen'),
+			loadingElapsedTime = window.performance && window.performance.now ? window.performance.now() : 0,
+			loadingWarningTimeout = window.setTimeout(function() {
+				loadingScreen.classList.add('is-slow');
+			}, Math.max(0, 4000 - loadingElapsedTime));
+
 		$window.on('load', function() {
-			var loadingScreen = document.getElementById('loading-screen'),
-				loadingAvatar = loadingScreen.querySelector('img'),
+			var loadingAvatar = loadingScreen.querySelector('img'),
 				logo = document.querySelector('#header .logo'),
 				logoRect = logo.getBoundingClientRect(),
 				avatarRect = loadingAvatar.getBoundingClientRect(),
 				deltaX = logoRect.left + logoRect.width / 2 - (avatarRect.left + avatarRect.width / 2),
 				deltaY = logoRect.top + logoRect.height / 2 - (avatarRect.top + avatarRect.height / 2);
+
+			window.clearTimeout(loadingWarningTimeout);
 
 			loadingScreen.classList.add('is-moving');
 			window.setTimeout(function() {
