@@ -160,7 +160,7 @@
 		});
 		if (window.ResizeObserver)
 			new ResizeObserver(updateSnowPileTarget).observe(document.getElementById('snow-toggle'));
-		snowPile.addEventListener('click', function(event) {
+		document.addEventListener('click', function(event) {
 			if (!snowEnabled || !isOnSnow(event))
 				return;
 

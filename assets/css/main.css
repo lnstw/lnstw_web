@@ -535,7 +535,7 @@ body {
 		width: 100%;
 		height: var(--snow-height, 0px);
 		z-index: 4;
-		pointer-events: auto;
+		pointer-events: none;
 		cursor: default;
 		transition: opacity 0.3s ease-in-out;
 		background:
